@@ -1,0 +1,8 @@
+{
+  "name": "IONIC APP",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular",
+  "id": "62548218"
+}
