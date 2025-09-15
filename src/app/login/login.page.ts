@@ -17,7 +17,7 @@ export class LoginPage implements OnInit {
 
   login() {
     if (this.email === 'admin' && this.password === 'admin') {
-      window.location.href = '';
+      window.location.href = 'main';
     } else {
       alert('Email atau password salah. Silakan coba lagi.');
     }

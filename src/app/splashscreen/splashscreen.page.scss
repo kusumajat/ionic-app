@@ -11,3 +11,12 @@
   margin-bottom: 20px;
   font-size: 80px;
 }
+
+.version {
+    position: absolute; /* Atur posisi secara absolut */
+  bottom: 16px;     /* Jarak 16px dari bawah */
+  left: 0;          /* Ratakan ke kiri */
+  right: 0;         /* Ratakan ke kanan */
+  text-align: center; /* Agar teks tetap di tengah */
+  width: 100%;
+}
