@@ -1,7 +1,6 @@
 export const environment = {
   production: true,
 
-  // Your web app's Firebase configuration
   firebaseConfig: {
     apiKey: 'AIzaSyDUSYwFHB3VcXNNn7yuheokBkkU4GOBal0',
     authDomain: 'pgpbl-ion.firebaseapp.com',
