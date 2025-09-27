@@ -69,5 +69,7 @@ testem.log
 .DS_Store
 Thumbs.db
 
-!/environments/environment.ts
-!/environments/environment.prod.ts
+# Konfigurasi lingkungan spesifik
+# Mengandung kunci API dan data sensitif lainnya yang tidak boleh di-commit.
+/src/environments/environment.ts
+/src/environments/environment.prod.ts
