@@ -6,12 +6,12 @@ export const environment = {
   production: false,
 
   firebaseConfig: {
-    apiKey: '',
-    authDomain: '',
-    projectId: '',
-    storageBucket: '',
-    messagingSenderId: '',
-    appId: '',
+    apiKey: 'AIzaSyDUSYwFHB3VcXNNn7yuheokBkkU4GOBal0',
+    authDomain: 'pgpbl-ion.firebaseapp.com',
+    projectId: 'pgpbl-ion',
+    storageBucket: 'pgpbl-ion.firebasestorage.app',
+    messagingSenderId: '519248307536',
+    appId: '1:519248307536:web:9733e23ddc5b9a8e793855',
   },
 };
 
