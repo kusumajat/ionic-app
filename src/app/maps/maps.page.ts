@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import * as L from 'leaflet';
 import { DataService } from '../data.service';
 
@@ -27,6 +28,9 @@ export class MapsPage implements OnInit {
   map!: L.Map;
 
   private dataService = inject(DataService);
+  private alertCtrl = inject(AlertController);
+  private loadingCtrl = inject(LoadingController);
+  private toastCtrl = inject(ToastController);
 
   constructor() {}
 
@@ -41,13 +45,84 @@ export class MapsPage implements OnInit {
         const marker = L.marker(coordinates as L.LatLngExpression).addTo(
           this.map
         );
-        marker.bindPopup(`${point.name}`);
+        marker.bindPopup(`
+          <div class="custom-popup">
+            <div class="popup-header">${point.name}</div>
+            <div class="popup-actions">
+              <a href="/editpoint/${key}" class="popup-button edit">
+                <ion-icon name="create-outline"></ion-icon> Edit
+              </a>
+              <a href="#" class="popup-button delete delete-link" data-key="${key}">
+                <ion-icon name="trash-outline"></ion-icon> Delete
+              </a>
+            </div>
+          </div>
+        `);
       }
     }
 
     this.map.on('popupopen', (e) => {
       const popup = e.popup;
+      const deleteLink = popup.getElement()?.querySelector('.delete-link');
+      if (deleteLink) {
+        deleteLink.addEventListener('click', (event) => {
+          event.preventDefault();
+          const key = (event.currentTarget as HTMLElement).dataset['key'];
+          if (key) {
+            this.deletePoint(key, popup.getLatLng());
+          }
+        });
+      }
     });
+  }
+
+  async deletePoint(key: string, latLng: L.LatLng | undefined) {
+    const alert = await this.alertCtrl.create({
+      header: 'Confirm Deletion',
+      message: 'Are you sure you want to delete this point?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            // Do nothing
+          },
+        },
+        {
+          text: 'Delete',
+          handler: async () => {
+            const loading = await this.loadingCtrl.create({
+              message: 'Deleting...',
+              spinner: 'crescent',
+              showBackdrop: true
+            });
+            await loading.present();
+
+            await this.dataService.deletePoint(key);
+
+            if (latLng) {
+              this.map.eachLayer((layer) => {
+                if (layer instanceof L.Marker) {
+                  if (layer.getLatLng().equals(latLng)) {
+                    this.map.removeLayer(layer);
+                  }
+                }
+              });
+            }
+
+            await loading.dismiss();
+            const toast = await this.toastCtrl.create({
+              message: 'Point deleted successfully!',
+              duration: 800,
+              color: 'success'
+            });
+            await toast.present();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 
   ngOnInit() {

@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController, AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { DataService } from '../data.service';
 import * as L from 'leaflet';
 import { icon, Marker } from 'leaflet';
@@ -33,6 +33,8 @@ export class CreatepointPage implements OnInit {
   private navCtrl = inject(NavController);
   private alertCtrl = inject(AlertController);
   private dataService = inject(DataService);
+  private loadingCtrl = inject(LoadingController);
+  private toastCtrl = inject(ToastController);
 
   constructor() {}
 
@@ -67,10 +69,10 @@ export class CreatepointPage implements OnInit {
       L.control.layers(baseMaps).addTo(this.map);
 
       var tooltip =
-        'Drag the marker or move the map<br>to change the coordinates<br>of the location';
+        '<div class="custom-popup">Drag marker to change location</div>';
       var marker = L.marker([-7.7956, 110.3695], { draggable: true });
       marker.addTo(this.map);
-      marker.bindPopup(tooltip);
+      marker.bindPopup(tooltip, { closeButton: false });
       marker.openPopup();
 
       //Dragend marker
@@ -89,14 +91,29 @@ export class CreatepointPage implements OnInit {
 
   async save() {
     if (this.name && this.coordinates) {
+      const loading = await this.loadingCtrl.create({
+        message: 'Saving...',
+        spinner: 'crescent',
+        showBackdrop: true
+      });
+      await loading.present();
+
       try {
         await this.dataService.savePoint({
           name: this.name,
           coordinates: this.coordinates,
         });
+        await loading.dismiss();
+        const toast = await this.toastCtrl.create({
+          message: 'Point created successfully!',
+          duration: 2000,
+          color: 'success'
+        });
+        await toast.present();
         // back to route maps
         this.navCtrl.back();
       } catch (error: any) {
+        await loading.dismiss();
         const alert = await this.alertCtrl.create({
           header: 'Save Failed',
           message: error.message,
